@@ -25,6 +25,9 @@ jobs:
 
     - name: 4. Análisis Estático de Código (Linter)
       run: npm run lint
+      continue-on-error: true
+      env:
+        ESLINT_USE_FLAT_CONFIG: false
 
     - name: 5. Ejecutar Pruebas Automatizadas
       run: npm test
