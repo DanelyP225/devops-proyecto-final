@@ -1,0 +1,40 @@
+name: Pipeline CI/CD DevOps
+
+on:
+  push:
+    branches: [ "main", "master" ]
+  pull_request:
+    branches: [ "main", "master" ]
+
+jobs:
+  build-and-test:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: 1. Clonar repositorio
+      uses: actions/checkout@v4
+
+    - name: 2. Configurar Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: '20'
+        cache: 'npm'
+
+    - name: 3. Instalar dependencias
+      run: npm ci
+
+    - name: 4. Análisis Estático de Código (Linter)
+      run: npm run lint
+
+    - name: 5. Ejecutar Pruebas Automatizadas
+      run: npm test
+
+    - name: 6. Configurar Docker Buildx
+      uses: docker/setup-buildx-action@v3
+
+    - name: 7. Construir imagen Docker (Verificación de Build)
+      uses: docker/build-push-action@v5
+      with:
+        context: .
+        push: false
+        tags: devops-app:latest
