@@ -1,6 +1,6 @@
 # Práctica Final: Diseño e Implementación de Pipeline DevOps
 
-Este repositorio contiene la implementación completa de una aplicación web integrada con un pipeline de Integración Continua (CI/CD), contenedores Docker, pruebas automatizadas y monitoreo básico.
+Este repositorio contiene la implementación completa de una aplicación web con arquitectura CRUD integrada con un pipeline de Integración Continua y Despliegue Continuo (CI/CD), contenedores Docker, pruebas automatizadas y monitoreo básico.
 
 ---
 
@@ -9,27 +9,30 @@ Este repositorio contiene la implementación completa de una aplicación web int
 ```text
 devops-proyecto-final/
 ├── .github/workflows/
-│   └── deploy.yml        # Pipeline CI/CD con GitHub Actions
+│   └── deploy.yml          # Pipeline CI/CD con GitHub Actions
+├── docs/                   # Documentación adicional
 ├── src/
 │   ├── public/
-│   │   └── index.html    # Frontend
-│   ├── server.js         # Backend (Node.js/Express)
-│   └── database.js       # Base de Datos (SQLite)
+│   │   └── index.html      # Frontend interactivo (CRUD + Monitor)
+│   ├── server.js           # Backend (Node.js / Express REST API)
+│   ├── database.js         # Configuración y conexión a SQLite
+│   └── database.sqlite     # Archivo local de base de datos
 ├── tests/
-│   ├── unit.test.js      # Pruebas Unitarias
-│   └── integration.test.js # Pruebas de Integración
-├── Dockerfile            # Configuración del contenedor
-├── .eslintrc.json        # Linter para análisis estático
-└── package.json          # Dependencias y scripts
+│   ├── unit.test.js        # Pruebas Unitarias
+│   └── integration.test.js # Pruebas de Integración (Suite CRUD & Health)
+├── .eslintrc.json          # Configuración de análisis estático
+├── .gitignore              # Reglas de exclusión para Git
+├── Dockerfile              # Empaquetado y contenedorización
+├── package.json            # Scripts y dependencias del proyecto
+└── README.md               # Documentación general
 
-
- Tecnologías Utilizadas
+Tecnologías Utilizadas
 
     Control de Versiones: Git / GitHub
 
-    Backend: Node.js, Express
+    Backend: Node.js, Express.js (REST API con soporte CRUD completo)
 
-    Base de Datos: SQLite
+    Base de Datos: SQLite (sqlite3)
 
     Testing: Jest, Supertest
 
@@ -39,9 +42,7 @@ devops-proyecto-final/
 
     CI/CD: GitHub Actions
 
-
-
-    Guía de Instalación y Ejecución Local
+ Guía de Instalación y Ejecución Local
 
     Clonar el repositorio:
     Bash
@@ -54,6 +55,11 @@ devops-proyecto-final/
 
     npm install
 
+    Ejecutar análisis estático (Linter):
+    Bash
+
+    npm run lint
+
     Ejecutar pruebas automatizadas:
     Bash
 
@@ -64,11 +70,9 @@ devops-proyecto-final/
 
     npm start
 
-    Accede a la aplicación en http://localhost:3000.
+    Accede a la interfaz web en: http://localhost:3000
 
-
-
-    Ejecución con Docker
+ Ejecución con Docker
 
     Construir la imagen de Docker:
     Bash
@@ -78,27 +82,26 @@ devops-proyecto-final/
     Ejecutar el contenedor:
     Bash
 
-    docker run -p 3000:3000 devops-app
+    docker run -d -p 3000:3000 --name devops-container devops-app
 
+ Pipeline CI/CD (GitHub Actions)
 
-Pipeline CI/CD (GitHub Actions)
+El flujo de trabajo se encuentra configurado en .github/workflows/deploy.yml y se dispara automáticamente ante eventos de push o pull_request sobre la rama principal (main/master). Ejecuta las siguientes etapas:
 
-El pipeline de CI/CD se activa automáticamente en cada push o pull_request a las ramas main o master. Realiza los siguientes pasos:
+    Checkout: Descarga el código fuente del repositorio.
 
-    Checkout: Clona el código fuente.
+    Setup Node.js: Configura el entorno de ejecución Node.js v20 con caché de paquetes.
 
-    Setup: Configura el entorno de Node.js v20.
+    Install: Instala las dependencias limpias del proyecto (npm ci).
 
-    Install: Instala las dependencias necesarias de forma limpia (npm ci).
+    Lint: Evalúa el estándar y calidad del código mediante análisis estático (npm run lint).
 
-    Lint: Realiza un análisis estático del código (npm run lint).
+    Automated Testing: Ejecuta las pruebas unitarias y de integración end-to-end (npm test).
 
-    Test: Ejecuta el suite de pruebas unitarias y de integración (npm test).
+    Docker Build: Valida la construcción correcta de la imagen Docker de producción.
 
-    Docker Build: Construye y verifica la imagen de Docker.
+ Monitoreo y Salud de la Aplicación
 
-Monitoreo y Salud de la Aplicación
+    Endpoint de Salud (/health): Retorna el estado operativo del servicio y la marca de tiempo actual ({ "status": "UP", "timestamp": "..." }).
 
-    Endpoint de Salud (/health): Permite verificar que el servicio está activo retornando { "status": "UP" }.
-
-    Logs Centralizados: Registrar marcas de tiempo ISO y método/ruta de cada petición HTTP en la salida estándar de la consola.
+    Logs Centralizados: Middleware HTTP configurado en Express para registrar en consola la fecha en formato ISO, método y ruta de cada solicitud entrante.
