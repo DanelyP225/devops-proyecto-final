@@ -23,7 +23,7 @@ devops-proyecto-final/
 └── package.json          # Dependencias y scripts
 
 
-Tecnologías Utilizadas
+ Tecnologías Utilizadas
 
     Control de Versiones: Git / GitHub
 
